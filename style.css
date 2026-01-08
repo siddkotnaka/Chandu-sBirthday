@@ -12,16 +12,21 @@ body {
 }
 
 /* Mobile only */
-@media (min-width: 769px) {
+@media (min-width: 1025px) {
     body {
         display: flex;
         justify-content: center;
         align-items: center;
+        background: black;
+        color: white;
     }
+
     body::before {
         content: "Open this on mobile ❤️";
-        font-size: 24px;
+        font-size: 22px;
+        text-align: center;
     }
+
     .pages {
         display: none;
     }
@@ -331,4 +336,5 @@ body {
 @keyframes fadeIn {
     to { opacity: 1; }
 }
+
 
