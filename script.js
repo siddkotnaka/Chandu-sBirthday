@@ -9,7 +9,9 @@ const heartsContainer = document.getElementById("hearts");
 
 // Page 2
 const memorySlider = document.getElementById("memorySlider");
-const memorySlides = memorySlider ? memorySlider.children : [];
+const memorySlides = memorySlider
+  ? memorySlider.querySelectorAll(".slide")
+  : [];
 const memoryVideos = document.querySelectorAll(".memoryVideo");
 
 // ================== MUSIC (FIRST TOUCH) ==================
@@ -155,3 +157,4 @@ if (memorySlider) {
     }
   });
 }
+
