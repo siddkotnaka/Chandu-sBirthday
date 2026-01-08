@@ -21,24 +21,20 @@ document.body.addEventListener(
   { once: true }
 );
 
-// ================== LOVE INTRO ANIMATION ==================
+// ================== INTRO HEART SEQUENCE ==================
 if (heartBtn) {
   heartBtn.addEventListener("click", () => {
-    // Arrow shoots diagonally
     arrow.style.opacity = "1";
     arrow.classList.add("shoot");
 
-    // Heart hit
     setTimeout(() => {
       heartBtn.classList.add("hit");
     }, 600);
 
-    // White flash
     setTimeout(() => {
       flash.classList.add("flash-on");
     }, 1200);
 
-    // Start intro video
     setTimeout(() => {
       heartBtn.style.display = "none";
       arrow.style.display = "none";
@@ -64,23 +60,23 @@ function createFloatingHeart() {
 
   const heart = document.createElement("span");
   heart.innerHTML = "❤️";
-
   heart.style.left = Math.random() * 100 + "vw";
   heart.style.fontSize = Math.random() * 8 + 10 + "px";
   heart.style.animationDuration = Math.random() * 3 + 4 + "s";
 
   heartsContainer.appendChild(heart);
-
   setTimeout(() => heart.remove(), 7000);
 }
 
 setInterval(createFloatingHeart, 400);
 
-// ================== PAGE 2 AUTO SLIDER (FIX-4 FINAL) ==================
+// ================== PAGE 2 SMART SLIDER ==================
 let memoryIndex = 0;
 let autoSlideInterval = null;
+let touchStartY = 0;
+let touchEndY = 0;
 
-// Go to slide
+// GO TO SLIDE
 function goToMemorySlide(index) {
   if (!memorySlider) return;
 
@@ -89,43 +85,73 @@ function goToMemorySlide(index) {
     behavior: "smooth",
   });
 
-  // Pause all videos
-  memoryVideos.forEach((video) => {
-    video.pause();
-    video.currentTime = 0;
+  [...memorySlides].forEach((slide) => {
+    slide.classList.remove("active");
+    const v = slide.querySelector("video");
+    if (v) {
+      v.pause();
+      v.currentTime = 0;
+    }
   });
 
-  // Play active slide video
   const activeSlide = memorySlides[index];
   if (!activeSlide) return;
 
+  activeSlide.classList.add("active");
+
   const activeVideo = activeSlide.querySelector("video");
+
+  // 🎥 VIDEO SLIDE → WAIT TILL END
   if (activeVideo) {
+    stopAutoSlide();
     activeVideo.play().catch(() => {});
+
+    activeVideo.onended = () => {
+      memoryIndex = (memoryIndex + 1) % memorySlides.length;
+      goToMemorySlide(memoryIndex);
+    };
+  } 
+  // 🖼 IMAGE SLIDE → AUTO SLIDE
+  else {
+    startAutoSlide();
   }
 }
 
-// Start auto slide
+// AUTO SLIDE (IMAGES ONLY)
 function startAutoSlide() {
-  if (!memorySlider) return;
-
+  stopAutoSlide();
   autoSlideInterval = setInterval(() => {
     memoryIndex = (memoryIndex + 1) % memorySlides.length;
     goToMemorySlide(memoryIndex);
-  }, 7000);
+  }, 6000);
 }
 
-// Stop auto slide
 function stopAutoSlide() {
-  clearInterval(autoSlideInterval);
+  if (autoSlideInterval) clearInterval(autoSlideInterval);
 }
 
-// Init
+// INIT
 if (memorySlider && memorySlides.length > 0) {
   goToMemorySlide(0);
-  startAutoSlide();
 
-  // Pause when user touches (Safari safe)
   memorySlider.addEventListener("touchstart", stopAutoSlide);
   memorySlider.addEventListener("touchend", startAutoSlide);
+}
+
+// ================== SWIPE DOWN → NEXT PAGE ==================
+if (memorySlider) {
+  memorySlider.addEventListener("touchstart", (e) => {
+    touchStartY = e.touches[0].clientY;
+  });
+
+  memorySlider.addEventListener("touchend", (e) => {
+    touchEndY = e.changedTouches[0].clientY;
+
+    if (touchStartY - touchEndY > 80) {
+      pages.scrollBy({
+        top: window.innerHeight,
+        behavior: "smooth",
+      });
+    }
+  });
 }
