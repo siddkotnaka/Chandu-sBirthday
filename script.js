@@ -165,6 +165,37 @@ function startFinal() {
     }, 15000);
 }
 
+const slider = document.getElementById("memorySlider");
+const slides = slider.children;
+let currentIndex = 0;
+
+setInterval(() => {
+    currentIndex = (currentIndex + 1) % slides.length;
+
+    slider.scrollTo({
+        left: currentIndex * slider.clientWidth,
+        behavior: "smooth"
+    });
+}, 7000);
+
 if (currentIndex === slides.length - 1) {
     startFinal();
 }
+
+const memoryVideos = document.querySelectorAll(".memoryVideo");
+
+function handleVideoPlayback() {
+    memoryVideos.forEach(video => {
+        const rect = video.getBoundingClientRect();
+        if (rect.left >= 0 && rect.right <= window.innerWidth) {
+            video.play();
+        } else {
+            video.pause();
+            video.currentTime = 0;
+        }
+    });
+}
+
+setInterval(handleVideoPlayback, 7000);
+
+
