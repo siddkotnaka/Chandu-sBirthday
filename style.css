@@ -337,4 +337,18 @@ body {
     to { opacity: 1; }
 }
 
+#hearts {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+}
 
+.pages {
+    position: relative;
+    z-index: 2;
+}
+
+video {
+    z-index: 3;
+}
